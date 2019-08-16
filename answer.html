@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>答题卡</title>
+	<meta charset="utf-8">
+  <style type="text/css">
+    .answer-container{
+      width: 700px;
+      height: 500px;
+      background: #efc3ae;
+      margin: 200px auto;
+      position: relative;
+    }
+    .titleClass{
+     font-size: 30px;
+    }
+    .answerClass{
+      font-size: 20px;
+     margin-top: 80px;
+    }
+    .options-item{
+      background: #e0d78a;
+      border: 1px solid #efc3ae;
+      height: 50px;
+      line-height: 50px;
+      
+      cursor: pointer;
+    }
+    .currentClass{
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="answer-container">
+    <div id="answer-title" class="titleClass"></div>
+    <div id="answer-list" class="answerClass">   
+    </div>
+    <div id="answer-current" class="currentClass"></div>
+  </div>
+ 
+  <script type="text/javascript" src="./data.js"></script>
+  <script type="text/javascript">
+  	let tikus = datas.data;
+
+  	const PAGE = {
+  		data: {
+  			index: 0,
+  			tikus: tikus,
+        id:1,
+  		},
+  		init:function() {
+        this.bind();
+        this.render();
+  		},
+  		bind: function() {
+        let answer = document.getElementById('answer-list');
+        this.onEventLister(answer,'click','options-item',this.answerTodo);
+  		},
+      onEventLister: function(parentNode,action,childClassName,callback) {
+        parentNode.addEventListener(action,function(e){
+          e.target.className.indexOf(childClassName) >= 0 && callback(e);
+          })
+         },
+  		render: function(){
+  		  let index = PAGE.data.index;
+  	    let tikus = PAGE.data.tikus;
+        let tikusArr = tikus[index];
+        let title =  tikusArr.title;
+  	    let total = tikus.length;
+        let numberArr = ['A:','B:','C:','D:'];
+        let atPresent = tikusArr.id;
+
+  	    let options = tikusArr.options;        
+ 				let optionArr =  JSON.parse(options);
+        let optionsid = PAGE.data.id;
+  	    let serialMap = optionArr.map((data,index) => {
+  	      return `<div class="options-item" data-id="${optionsid}">${numberArr[index]} ${data}</div>`
+  	    }).join('');
+
+  	    let answerList = document.getElementById('answer-list');
+        let answerTitle = document.getElementById('answer-title');
+        let answerCurrent = document.getElementById('answer-current');
+
+        answerTitle.innerHTML = atPresent +": " + title;
+  	    answerList.innerHTML= serialMap;
+        answerCurrent.innerHTML = atPresent + "/" + total;
+  		},
+      answerTodo: function(e){
+        let optionsItem = e.target;
+        let optionsId = optionsItem.dataset.id;
+       //console.log(optionsId)
+
+        PAGE.data.id = PAGE.data.index+1;
+     
+        PAGE.data.index = PAGE.data.id;
+
+        //console.log(optionsId)
+        let tikus = PAGE.data.tikus;
+        let total = tikus.length;
+        if (optionsId == total-1) {
+          window.alert('已经到最后了');
+          return 
+        }
+        PAGE.render();
+      }
+  	}
+// console.log(tikusArr)
+  	PAGE.init();
+
+  </script>
+</body>
+</html>
